@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+#LOCAL_IP=$(echo `ip -br addr`|awk '{match($0,/UP +([0-9.]+)/,m);print m[1]}')  #the local ip that you executing this script
+THIS_DIR=$(dirname $(readlink -f $0)) #执行脚本目录  $(cd 'dirname $0';pwd)  tmp=$0&&eval $(echo "THIS_DIR="$(echo ${tmp%/*}))
+. ./configurations
+declare -A IP_HOSTS                               #creat a IP_HOSTS dictionary
+#in awk there is a difference for dictionary "for arg in args" args represent key,not key-value set
+eval $(awk -F" " '{IP_HOSTS[$1]=$2}END{for( IP in IP_HOSTS ){print "IP_HOSTS["IP"]="IP_HOSTS[IP]}}' ./tools/ip_hosts)
+[[ -z $MASTER ]] && MASTER=${IP_HOSTS[$MASTER_IP]}
+IPS=${!IP_HOSTS[@]}
+HOSTS=${IP_HOSTS[@]}
+EXPECT_CMD='
+    expect {
+        "assword*"                              {send "'$PSWD'\n"; exp_continue}
+        "yes/no*"                               {send "yes\n"  ; exp_continue}
+        "Overwrite (y/n)*"                      {send "y\n"    ; exp_continue}
+        eof                                     {exit}
+    }'
