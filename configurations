@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+#可以设置你要设置的程序安装目录，以及集群账号密码，主节点ip，副本数
 APP_HOME=/home/spark/basedir
 USR=spark
 PSWD=hadoop
